@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const { testPgConnection, connectMongoDB } = require('./config/db');
+const { testPgConnection, connectMongoDB, inMemoryStore } = require('./config/db');
 const { initializeFirebase } = require('./config/firebase');
+const ProductModel = require('./models/productModel');
 
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -43,6 +44,8 @@ const startServer = async () => {
     const pgConnected = await testPgConnection();
     if (!pgConnected) {
       console.log('PostgreSQL not connected. Using in-memory store for development.');
+    } else {
+      await ProductModel.initTable();
     }
     
     await connectMongoDB();
