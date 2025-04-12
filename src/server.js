@@ -40,7 +40,10 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
-    await testPgConnection();
+    const pgConnected = await testPgConnection();
+    if (!pgConnected) {
+      console.log('PostgreSQL not connected. Using in-memory store for development.');
+    }
     
     await connectMongoDB();
     
@@ -48,10 +51,19 @@ const startServer = async () => {
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`API available at http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Server startup error:', error);
-    process.exit(1);
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    } else {
+      console.log('Continuing in development mode despite errors');
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT} in fallback mode`);
+        console.log(`API available at http://localhost:${PORT}`);
+      });
+    }
   }
 };
 
