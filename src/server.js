@@ -40,14 +40,53 @@ app.use('/api/analytics', analyticsRoutes); // Some endpoints require admin, enf
 app.use('/api/email', emailRoutes); // Some endpoints require admin, enforced in routes
 app.use('/api/discounts', discountRoutes); // Some endpoints require admin, enforced in routes
 
-app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  res.status(200).json({ received: true });
+app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    const sig = req.headers['stripe-signature'];
+    const stripeService = require('./services/stripeService');
+    
+    if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+      console.warn('Missing Stripe signature or webhook secret');
+      return res.status(400).json({ error: 'Missing signature' });
+    }
+    
+    let event;
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error('Stripe webhook verification error:', err.message);
+      return res.status(400).json({ error: err.message });
+    }
+    
+    const result = await stripeService.handleWebhookEvent(event);
+    
+    res.status(200).json({ received: true, result });
+  } catch (error) {
+    console.error('Stripe webhook error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal server error' });
+  console.error('Server error:', err);
+  
+  const statusCode = err.statusCode || 500;
+  
+  const errorResponse = {
+    success: false,
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? {
+      stack: err.stack,
+      details: err.details || null
+    } : undefined
+  };
+  
+  res.status(statusCode).json(errorResponse);
 });
 
 const startServer = async () => {

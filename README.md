@@ -75,7 +75,8 @@ CANTEEN42 is a comprehensive dropshipping platform with the following components
 ### Users
 - `GET /api/users` - Get all users (admin only)
 - `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create a new user
+- `POST /api/users/register` - Register a new user
+- `POST /api/users/login` - Login and get authentication token
 - `PUT /api/users/:id` - Update a user
 - `DELETE /api/users/:id` - Delete a user
 
@@ -84,7 +85,9 @@ CANTEEN42 is a comprehensive dropshipping platform with the following components
 - `GET /api/orders/:id` - Get order by ID
 - `POST /api/orders` - Create a new order
 - `PUT /api/orders/:id` - Update an order
-- `DELETE /api/orders/:id` - Delete an order
+- `POST /api/orders/:id/cancel` - Cancel an order
+- `PATCH /api/orders/:id/status` - Update order status (admin only)
+- `DELETE /api/orders/:id` - Delete an order (admin only)
 
 ### Admin
 - `GET /api/admin/dashboard` - Get dashboard statistics
@@ -92,6 +95,43 @@ CANTEEN42 is a comprehensive dropshipping platform with the following components
 - `GET /api/admin/users` - Manage users
 - `GET /api/admin/orders` - Manage orders
 - `GET /api/admin/analytics` - Get analytics data
+
+### Analytics
+- `GET /api/analytics/dashboard` - Get analytics dashboard data (admin only)
+- `GET /api/analytics/users` - Get user statistics (admin only)
+- `GET /api/analytics/products` - Get product statistics (admin only)
+- `GET /api/analytics/orders` - Get order statistics (admin only)
+- `POST /api/analytics/events/favorite` - Log product favorite event
+- `POST /api/analytics/events/notify-me` - Log notify-me event
+- `POST /api/analytics/events/cart-abandonment` - Log cart abandonment event
+- `POST /api/analytics/events/custom` - Log custom event
+- `GET /api/analytics/top-favorited` - Get top favorited products
+- `GET /api/analytics/top-notify-me` - Get top notify-me products
+- `GET /api/analytics/cart-abandonment` - Get recent cart abandonment data
+
+### Email
+- `GET /api/email/templates` - Get all email templates (admin only)
+- `GET /api/email/templates/:id` - Get email template by ID (admin only)
+- `POST /api/email/templates` - Create a new email template (admin only)
+- `PUT /api/email/templates/:id` - Update an email template (admin only)
+- `DELETE /api/email/templates/:id` - Delete an email template (admin only)
+- `POST /api/email/trigger/notify-me` - Trigger notify-me email
+- `POST /api/email/trigger/favorite` - Trigger favorite email
+- `POST /api/email/trigger/cart-abandonment` - Trigger cart abandonment email
+
+### Discounts
+- `GET /api/discounts` - Get all discounts (admin only)
+- `GET /api/discounts/:id` - Get discount by ID (admin only)
+- `POST /api/discounts` - Create a new discount (admin only)
+- `PUT /api/discounts/:id` - Update a discount (admin only)
+- `DELETE /api/discounts/:id` - Delete a discount (admin only)
+- `GET /api/discounts/:id/stats` - Get discount usage statistics (admin only)
+- `GET /api/discounts/:id/redemptions` - Get discount redemptions (admin only)
+- `POST /api/discounts/apply` - Apply discount to cart
+- `POST /api/discounts/redemption` - Record discount redemption
+
+### Webhooks
+- `POST /api/webhook/stripe` - Stripe webhook endpoint
 
 ## Project Structure
 
