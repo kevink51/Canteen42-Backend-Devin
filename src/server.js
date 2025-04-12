@@ -5,6 +5,7 @@ require('dotenv').config();
 const { testPgConnection, connectMongoDB, inMemoryStore } = require('./config/db');
 const { initializeFirebase } = require('./config/firebase');
 const ProductModel = require('./models/productModel');
+const UserModel = require('./models/userModel');
 
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
-app.use('/api/users', verifyToken, userRoutes);
+app.use('/api/users', userRoutes); // No verifyToken here to allow public access to register/login
 app.use('/api/orders', verifyToken, orderRoutes);
 app.use('/api/admin', verifyToken, isAdmin, adminRoutes);
 
@@ -46,6 +47,7 @@ const startServer = async () => {
       console.log('PostgreSQL not connected. Using in-memory store for development.');
     } else {
       await ProductModel.initTable();
+      await UserModel.initTable();
     }
     
     await connectMongoDB();

@@ -1,46 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/userController');
+const { verifyToken, isAdmin } = require('../middleware/auth');
 
-const userController = {
-  getAllUsers: (req, res) => {
-    res.status(200).json({ 
-      message: 'Get all users endpoint',
-      data: [] 
-    });
-  },
-  
-  getUserById: (req, res) => {
-    res.status(200).json({ 
-      message: `Get user with ID: ${req.params.id}`,
-      data: {} 
-    });
-  },
-  
-  createUser: (req, res) => {
-    res.status(201).json({ 
-      message: 'Create user endpoint',
-      data: req.body 
-    });
-  },
-  
-  updateUser: (req, res) => {
-    res.status(200).json({ 
-      message: `Update user with ID: ${req.params.id}`,
-      data: req.body 
-    });
-  },
-  
-  deleteUser: (req, res) => {
-    res.status(200).json({ 
-      message: `Delete user with ID: ${req.params.id}` 
-    });
-  }
-};
+router.post('/register', userController.register);
+router.post('/login', userController.login);
 
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.post('/', userController.createUser);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.get('/me', verifyToken, userController.getCurrentUser);
+router.get('/', verifyToken, userController.getAllUsers);
+router.get('/:id', verifyToken, userController.getUserById);
+router.post('/', verifyToken, userController.createUser);
+router.put('/:id', verifyToken, userController.updateUser);
+router.delete('/:id', verifyToken, userController.deleteUser);
 
 module.exports = router;
