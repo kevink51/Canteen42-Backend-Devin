@@ -4,6 +4,105 @@ const OrderModel = require('../models/orderModel');
 const AnalyticsModel = require('../models/analyticsModel');
 
 const adminController = {
+  bulkOperations: async (req, res) => {
+    try {
+      const { operation, type, ids } = req.body;
+      
+      if (!operation || !type || !ids || !Array.isArray(ids)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid request. Required: operation, type, and ids array'
+        });
+      }
+      
+      let result;
+      
+      switch (type) {
+        case 'products':
+          if (operation === 'delete') {
+            result = await Promise.all(ids.map(id => ProductModel.delete(id)));
+          } else if (operation === 'update') {
+            const { status } = req.body;
+            if (status) {
+              result = await Promise.all(ids.map(id => ProductModel.update(id, { status })));
+            } else {
+              return res.status(400).json({
+                success: false,
+                message: 'Update operation requires additional fields'
+              });
+            }
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: 'Unsupported operation for products'
+            });
+          }
+          break;
+          
+        case 'users':
+          if (operation === 'delete') {
+            result = await Promise.all(ids.map(id => UserModel.delete(id)));
+          } else if (operation === 'update') {
+            const { role } = req.body;
+            if (role) {
+              result = await Promise.all(ids.map(id => UserModel.update(id, { role })));
+            } else {
+              return res.status(400).json({
+                success: false,
+                message: 'Update operation requires additional fields'
+              });
+            }
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: 'Unsupported operation for users'
+            });
+          }
+          break;
+          
+        case 'orders':
+          if (operation === 'delete') {
+            result = await Promise.all(ids.map(id => OrderModel.delete(id)));
+          } else if (operation === 'update') {
+            const { status } = req.body;
+            if (status) {
+              result = await Promise.all(ids.map(id => OrderModel.update(id, { status })));
+            } else {
+              return res.status(400).json({
+                success: false,
+                message: 'Update operation requires additional fields'
+              });
+            }
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: 'Unsupported operation for orders'
+            });
+          }
+          break;
+          
+        default:
+          return res.status(400).json({
+            success: false,
+            message: 'Unsupported resource type'
+          });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: `Bulk ${operation} completed for ${type}`,
+        data: result.filter(item => item !== null)
+      });
+    } catch (error) {
+      console.error('Error in bulkOperations:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+  },
+  
   getDashboardStats: async (req, res) => {
     try {
       const [products, users, orders] = await Promise.all([

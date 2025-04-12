@@ -7,5 +7,6 @@ router.get('/products', adminController.manageProducts);
 router.get('/users', adminController.manageUsers);
 router.get('/orders', adminController.manageOrders);
 router.get('/analytics', adminController.getAnalytics);
+router.post('/bulk', adminController.bulkOperations);
 
 module.exports = router;

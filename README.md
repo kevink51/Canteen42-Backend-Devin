@@ -95,6 +95,7 @@ CANTEEN42 is a comprehensive dropshipping platform with the following components
 - `GET /api/admin/users` - Manage users
 - `GET /api/admin/orders` - Manage orders
 - `GET /api/admin/analytics` - Get analytics data
+- `POST /api/admin/bulk` - Perform bulk operations on products, users, or orders
 
 ### Analytics
 - `GET /api/analytics/dashboard` - Get analytics dashboard data (admin only)
