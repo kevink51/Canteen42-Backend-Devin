@@ -1,46 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const productController = require('../controllers/productController');
 
-const productController = {
-  getAllProducts: (req, res) => {
-    res.status(200).json({ 
-      message: 'Get all products endpoint',
-      data: [] 
-    });
-  },
-  
-  getProductById: (req, res) => {
-    res.status(200).json({ 
-      message: `Get product with ID: ${req.params.id}`,
-      data: {} 
-    });
-  },
-  
-  createProduct: (req, res) => {
-    res.status(201).json({ 
-      message: 'Create product endpoint',
-      data: req.body 
-    });
-  },
-  
-  updateProduct: (req, res) => {
-    res.status(200).json({ 
-      message: `Update product with ID: ${req.params.id}`,
-      data: req.body 
-    });
-  },
-  
-  deleteProduct: (req, res) => {
-    res.status(200).json({ 
-      message: `Delete product with ID: ${req.params.id}` 
-    });
-  }
-};
-
+// Get all products
 router.get('/', productController.getAllProducts);
+
+// Get a single product by ID
 router.get('/:id', productController.getProductById);
+
+// Create a new product
 router.post('/', productController.createProduct);
+
+// Update a product
 router.put('/:id', productController.updateProduct);
+
+// Delete a product
 router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;
