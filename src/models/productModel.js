@@ -69,7 +69,7 @@ class ProductModel {
       }
       
       const newProduct = {
-        id: Date.now().toString(),
+        id: productData.id || Date.now().toString(),
         title: productData.title,
         description: productData.description,
         price: productData.price,

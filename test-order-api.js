@@ -71,7 +71,9 @@ app.get('/test-create-order', async (req, res) => {
     };
     
     const ProductModel = require('./src/models/productModel');
-    await ProductModel.create({
+    
+    const product1 = await ProductModel.create({
+      id: 'test-product-1', // Match the ID in the order
       title: 'Test Product 1',
       description: 'Test product for order testing',
       price: 49.99,
@@ -79,8 +81,10 @@ app.get('/test-create-order', async (req, res) => {
       stock: 10,
       status: 'active'
     });
+    console.log('Created test product 1:', product1);
     
-    await ProductModel.create({
+    const product2 = await ProductModel.create({
+      id: 'test-product-2', // Match the ID in the order
       title: 'Test Product 2',
       description: 'Another test product',
       price: 29.99,
@@ -88,6 +92,9 @@ app.get('/test-create-order', async (req, res) => {
       stock: 5,
       status: 'active'
     });
+    console.log('Created test product 2:', product2);
+    
+    mockReq.body.totalAmount = (49.99 * 2) + (29.99 * 1);
     
     await orderController.createOrder(mockReq, mockRes);
   } catch (error) {
