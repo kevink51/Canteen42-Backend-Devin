@@ -6,11 +6,11 @@ const { verifyToken, isAdmin } = require('../middleware/auth');
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 
-router.get('/me', userController.getCurrentUser);
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.post('/', userController.createUser);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.get('/me', verifyToken, userController.getCurrentUser);
+router.get('/', verifyToken, userController.getAllUsers);
+router.get('/:id', verifyToken, userController.getUserById);
+router.post('/', verifyToken, userController.createUser);
+router.put('/:id', verifyToken, userController.updateUser);
+router.delete('/:id', verifyToken, userController.deleteUser);
 
 module.exports = router;
