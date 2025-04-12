@@ -9,6 +9,7 @@ const UserModel = require('./models/userModel');
 const OrderModel = require('./models/orderModel');
 const AnalyticsModel = require('./models/analyticsModel');
 const EmailTemplateModel = require('./models/emailTemplateModel');
+const DiscountModel = require('./models/discountModel');
 
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -16,6 +17,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const discountRoutes = require('./routes/discountRoutes');
 
 const { verifyToken, isAdmin } = require('./middleware/auth');
 
@@ -36,6 +38,7 @@ app.use('/api/orders', verifyToken, orderRoutes);
 app.use('/api/admin', verifyToken, isAdmin, adminRoutes);
 app.use('/api/analytics', analyticsRoutes); // Some endpoints require admin, enforced in routes
 app.use('/api/email', emailRoutes); // Some endpoints require admin, enforced in routes
+app.use('/api/discounts', discountRoutes); // Some endpoints require admin, enforced in routes
 
 app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
@@ -58,6 +61,7 @@ const startServer = async () => {
       await OrderModel.initTable();
       await AnalyticsModel.initTable();
       await EmailTemplateModel.initTable();
+      await DiscountModel.initTable();
     }
     
     await connectMongoDB();
