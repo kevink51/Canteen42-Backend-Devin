@@ -6,6 +6,7 @@ const { testPgConnection, connectMongoDB, inMemoryStore } = require('./config/db
 const { initializeFirebase } = require('./config/firebase');
 const ProductModel = require('./models/productModel');
 const UserModel = require('./models/userModel');
+const OrderModel = require('./models/orderModel');
 
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -48,6 +49,7 @@ const startServer = async () => {
     } else {
       await ProductModel.initTable();
       await UserModel.initTable();
+      await OrderModel.initTable();
     }
     
     await connectMongoDB();
