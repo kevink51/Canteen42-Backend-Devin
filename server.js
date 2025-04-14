@@ -91,10 +91,15 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
+    console.log('Starting server initialization...');
+    
+    console.log('Current in-memory store products:', JSON.stringify(inMemoryStore.products || []));
+    
     const pgConnected = await testPgConnection();
     if (!pgConnected) {
       console.log('PostgreSQL not connected. Using in-memory store for development.');
     } else {
+      console.log('PostgreSQL connected. Initializing tables...');
       await ProductModel.initTable();
       await UserModel.initTable();
       await OrderModel.initTable();
@@ -107,12 +112,28 @@ const startServer = async () => {
     
     initializeFirebase();
     
+    console.log('Registered routes:');
+    app._router.stack.forEach(function(r){
+      if (r.route && r.route.path){
+        console.log(`Route: ${r.route.path}, Methods: ${Object.keys(r.route.methods)}`);
+      } else if (r.name === 'router' && r.handle.stack) {
+        console.log(`Router middleware: ${r.regexp}`);
+        r.handle.stack.forEach(function(layer) {
+          if (layer.route) {
+            console.log(`  ${layer.route.path}, Methods: ${Object.keys(layer.route.methods)}`);
+          }
+        });
+      }
+    });
+    
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`API available at http://localhost:${PORT}`);
+      console.log(`Try accessing /api/products at http://localhost:${PORT}/api/products`);
     });
   } catch (error) {
     console.error('Server startup error:', error);
+    console.error(error.stack);
     if (process.env.NODE_ENV === 'production') {
       process.exit(1);
     } else {
