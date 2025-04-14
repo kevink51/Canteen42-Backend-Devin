@@ -2,24 +2,24 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const { testPgConnection, connectMongoDB, inMemoryStore } = require('./config/db');
-const { initializeFirebase } = require('./config/firebase');
-const ProductModel = require('./models/productModel');
-const UserModel = require('./models/userModel');
-const OrderModel = require('./models/orderModel');
-const AnalyticsModel = require('./models/analyticsModel');
-const EmailTemplateModel = require('./models/emailTemplateModel');
-const DiscountModel = require('./models/discountModel');
+const { testPgConnection, connectMongoDB, inMemoryStore } = require('./src/config/db');
+const { initializeFirebase } = require('./src/config/firebase');
+const ProductModel = require('./src/models/productModel');
+const UserModel = require('./src/models/userModel');
+const OrderModel = require('./src/models/orderModel');
+const AnalyticsModel = require('./src/models/analyticsModel');
+const EmailTemplateModel = require('./src/models/emailTemplateModel');
+const DiscountModel = require('./src/models/discountModel');
 
-const productRoutes = require('./routes/productRoutes');
-const userRoutes = require('./routes/userRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const analyticsRoutes = require('./routes/analyticsRoutes');
-const emailRoutes = require('./routes/emailRoutes');
-const discountRoutes = require('./routes/discountRoutes');
+const productRoutes = require('./src/routes/productRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const orderRoutes = require('./src/routes/orderRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
+const analyticsRoutes = require('./src/routes/analyticsRoutes');
+const emailRoutes = require('./src/routes/emailRoutes');
+const discountRoutes = require('./src/routes/discountRoutes');
 
-const { verifyToken, isAdmin } = require('./middleware/auth');
+const { verifyToken, isAdmin } = require('./src/middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,7 +43,7 @@ app.use('/api/discounts', discountRoutes); // Some endpoints require admin, enfo
 app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const sig = req.headers['stripe-signature'];
-    const stripeService = require('./services/stripeService');
+    const stripeService = require('./src/services/stripeService');
     
     if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
       console.warn('Missing Stripe signature or webhook secret');
