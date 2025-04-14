@@ -11,7 +11,7 @@ const AnalyticsModel = require('./models/analyticsModel');
 const EmailTemplateModel = require('./models/emailTemplateModel');
 const DiscountModel = require('./models/discountModel');
 
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
