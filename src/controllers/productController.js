@@ -30,6 +30,7 @@ const validateProduct = (product) => {
 
 const productController = {
   getAllProducts: async (req, res) => {
+    console.log('getAllProducts called - API endpoint hit');
     try {
       const filters = {
         status: req.query.status,
@@ -37,15 +38,20 @@ const productController = {
         maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice) : undefined
       };
       
+      console.log('Filters applied:', filters);
+      
       const products = await ProductModel.findAll(filters);
+      console.log('Products retrieved:', JSON.stringify(products));
       
       res.status(200).json({
         success: true,
         count: products.length,
         data: products
       });
+      console.log('Response sent successfully');
     } catch (error) {
       console.error('Error in getAllProducts:', error);
+      console.error('Error stack:', error.stack);
       res.status(500).json({
         success: false,
         message: 'Server error',
