@@ -11,7 +11,7 @@ const AnalyticsModel = require('./models/analyticsModel');
 const EmailTemplateModel = require('./models/emailTemplateModel');
 const DiscountModel = require('./models/discountModel');
 
-const productRoutes = require('./src/routes/productRoutes');
+const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -20,6 +20,7 @@ const emailRoutes = require('./routes/emailRoutes');
 const discountRoutes = require('./routes/discountRoutes');
 
 const { verifyToken, isAdmin } = require('./middleware/auth');
+const stripeService = require('./services/stripeService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,13 +44,12 @@ app.use('/api/discounts', discountRoutes); // Some endpoints require admin, enfo
 app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const sig = req.headers['stripe-signature'];
-    const stripeService = require('./services/stripeService');
-    
+
     if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
       console.warn('Missing Stripe signature or webhook secret');
       return res.status(400).json({ error: 'Missing signature' });
     }
-    
+
     let event;
     try {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -62,9 +62,8 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
       console.error('Stripe webhook verification error:', err.message);
       return res.status(400).json({ error: err.message });
     }
-    
+
     const result = await stripeService.handleWebhookEvent(event);
-    
     res.status(200).json({ received: true, result });
   } catch (error) {
     console.error('Stripe webhook error:', error);
@@ -74,9 +73,9 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
 
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
-  
+
   const statusCode = err.statusCode || 500;
-  
+
   const errorResponse = {
     success: false,
     message: err.message || 'Internal server error',
@@ -85,7 +84,7 @@ app.use((err, req, res, next) => {
       details: err.details || null
     } : undefined
   };
-  
+
   res.status(statusCode).json(errorResponse);
 });
 
@@ -102,11 +101,11 @@ const startServer = async () => {
       await EmailTemplateModel.initTable();
       await DiscountModel.initTable();
     }
-    
+
     await connectMongoDB();
-    
+
     initializeFirebase();
-    
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`API available at http://localhost:${PORT}`);
@@ -127,4 +126,5 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = app; // Export for testing
+module.exports = app;
+
