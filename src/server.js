@@ -95,7 +95,9 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
-    console.log('Starting server initialization...');
+    console.log('Starting server initialization... [Railway Redeploy Trigger]');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Start command:', 'node src/server.js');
     
     console.log('Current in-memory store products:', JSON.stringify(inMemoryStore.products || []));
     
@@ -134,6 +136,7 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`API available at http://localhost:${PORT}`);
       console.log(`Try accessing /api/products at http://localhost:${PORT}/api/products`);
+      console.log('Railway deployment should be using src/server.js as the entry point');
     });
   } catch (error) {
     console.error('Server startup error:', error);
