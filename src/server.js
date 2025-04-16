@@ -24,7 +24,10 @@ const { verifyToken, isAdmin } = require('./middleware/auth');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://canteen42-admin.vercel.app', 'https://canteen42-frontend-live.onrender.com'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
